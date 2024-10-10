@@ -376,7 +376,7 @@ class RenderRadialGauge extends RenderBox
   void _handleDragEnd(DragEndDetails details) {
     _restrictNeedlePointer = false;
     final Offset localPosition = globalToLocal(details.globalPosition);
-    _handleNewPosition(localPosition, radialPointerCallback: _movableShapePointer.onChanging);
+    _handleNewPosition(localPosition, radialPointerCallback: _movableShapePointer.onChanged);
     _horizontalDrag.dispose();
     _verticalDrag.dispose();
   }
