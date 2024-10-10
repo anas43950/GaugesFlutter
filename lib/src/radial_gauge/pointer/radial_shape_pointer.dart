@@ -100,7 +100,8 @@ class RadialShapePointer extends LeafRenderObjectWidget {
       height: height,
       width: width,
       isInteractive: isInteractive,
-      onChanged: onChanging,
+      onChanged: onChanged,
+      onChanging: onChanging,
       shape: shape,
       radialGauge: scope.rGauge,
     );
