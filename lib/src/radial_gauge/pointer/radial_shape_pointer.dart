@@ -35,6 +35,7 @@ class RadialShapePointer extends LeafRenderObjectWidget {
     this.height = 10,
     this.width = 10,
     this.onChanged,
+    this.onDragEnd,
     this.isInteractive = false,
     this.shape = PointerShape.triangle,
   });
@@ -59,7 +60,12 @@ class RadialShapePointer extends LeafRenderObjectWidget {
   /// `onChanged` is a  callback function that will be invoked when a `pointer`
   /// value is changed.
   ///
-  final Function(double, bool)? onChanged;
+  final ValueChanged<double>? onChanged;
+
+  ///
+  /// All callback function that will be invoked after a 'pointer' drag has ended
+  ///
+  final Function()? onDragEnd;
 
   ///
   /// `height` sets the height of the [RadialShapePointer] on the [RadialGauge]
@@ -94,6 +100,7 @@ class RadialShapePointer extends LeafRenderObjectWidget {
       width: width,
       isInteractive: isInteractive,
       onChanged: onChanged,
+      onDragEnd: onDragEnd,
       shape: shape,
       radialGauge: scope.rGauge,
     );

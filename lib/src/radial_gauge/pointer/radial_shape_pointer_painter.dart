@@ -9,7 +9,8 @@ class RenderRadialShapePointer extends RenderBox {
     required double value,
     required Color color,
     required double height,
-    required Function(double, bool)? onChanged,
+    required ValueChanged<double>? onChanged,
+    required Function()? onDragEnd,
     required double width,
     required bool isInteractive,
     required PointerShape shape,
@@ -18,6 +19,7 @@ class RenderRadialShapePointer extends RenderBox {
         _color = color,
         _height = height,
         _onChanged = onChanged,
+        _onDragEnd = onDragEnd,
         _isInteractive = isInteractive,
         _width = width,
         _shape = shape,
@@ -53,14 +55,24 @@ class RenderRadialShapePointer extends RenderBox {
     }
   }
 
-  Function(double, bool)? get onChanged => _onChanged;
-  Function(double, bool)? _onChanged;
+  ValueChanged<double>? get onChanged => _onChanged;
+  ValueChanged<double>? _onChanged;
 
-  set onChanged(Function(double, bool)? value) {
+  set onChanged(ValueChanged<double>? value) {
     if (value == _onChanged) {
       return;
     }
     _onChanged = value;
+  }
+
+  Function()? get onDragEnd => _onDragEnd;
+  Function()? _onDragEnd;
+
+  set onDragEnd(Function()? value) {
+    if (value == _onDragEnd) {
+      return;
+    }
+    _onDragEnd = value;
   }
 
   // Sets the Interaction for [RenderNeedlePointer].
