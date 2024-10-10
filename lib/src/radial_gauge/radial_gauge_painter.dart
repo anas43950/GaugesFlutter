@@ -311,20 +311,24 @@ class RenderRadialGauge extends RenderBox
 
   void _handleNewPosition(Offset position, {ValueChanged<double>? radialPointerCallback}) {
     final double angle = _getAngleFromOffset(position);
-    final double value = _getValueFromAngle(angle);
+    double value = _getValueFromAngle(angle);
+    if (value > getTrack.start) {
+      value = getTrack.start;
+    }
+    if (value < getTrack.end) {
+      value = getTrack.end;
+    }
 
-    if (value >= getTrack.start && value <= getTrack.end) {
-      if (_pointerType is RenderNeedlePointer) {
-        if (_movableWidget.isInteractive) {
-          if (_movableWidget.onChanged != null) {
-            _movableWidget.onChanged!(value);
-          }
+    if (_pointerType is RenderNeedlePointer) {
+      if (_movableWidget.isInteractive) {
+        if (_movableWidget.onChanged != null) {
+          _movableWidget.onChanged!(value);
         }
-      } else if (_pointerType is RenderRadialShapePointer) {
-        if (_movableShapePointer.isInteractive) {
-          if (radialPointerCallback != null) {
-            radialPointerCallback(value);
-          }
+      }
+    } else if (_pointerType is RenderRadialShapePointer) {
+      if (_movableShapePointer.isInteractive) {
+        if (radialPointerCallback != null) {
+          radialPointerCallback(value);
         }
       }
     }
