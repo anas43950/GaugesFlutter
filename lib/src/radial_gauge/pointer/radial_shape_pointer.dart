@@ -34,7 +34,6 @@ class RadialShapePointer extends LeafRenderObjectWidget {
     this.color = Colors.red,
     this.height = 10,
     this.width = 10,
-    this.onChanging,
     this.onChanged,
     this.isInteractive = false,
     this.shape = PointerShape.triangle,
@@ -58,15 +57,9 @@ class RadialShapePointer extends LeafRenderObjectWidget {
 
   ///
   /// `onChanged` is a  callback function that will be invoked when a `pointer`
-  /// value is changing.
-  ///
-  final ValueChanged<double>? onChanging;
-
-  ///
-  /// `onChanged` is a  callback function that will be invoked after a `pointer`
   /// value is changed.
   ///
-  final ValueChanged<double>? onChanged;
+  final Function(double, bool)? onChanged;
 
   ///
   /// `height` sets the height of the [RadialShapePointer] on the [RadialGauge]
@@ -101,7 +94,6 @@ class RadialShapePointer extends LeafRenderObjectWidget {
       width: width,
       isInteractive: isInteractive,
       onChanged: onChanged,
-      onChanging: onChanging,
       shape: shape,
       radialGauge: scope.rGauge,
     );
@@ -116,7 +108,7 @@ class RadialShapePointer extends LeafRenderObjectWidget {
       ..setColor = color
       ..setHeight = height
       ..setWidth = width
-      ..onChanging = onChanging
+      ..onChanged = onChanged
       ..setIsInteractive = isInteractive
       ..setShape = shape;
   }

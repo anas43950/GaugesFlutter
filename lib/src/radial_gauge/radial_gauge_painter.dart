@@ -309,26 +309,22 @@ class RenderRadialGauge extends RenderBox
     defaultPaint(context, offset);
   }
 
-  void _handleNewPosition(Offset position, {ValueChanged<double>? radialPointerCallback}) {
+  void _handleNewPosition(Offset position, {Function(double, bool)? radialPointerCallback}) {
     final double angle = _getAngleFromOffset(position);
     double value = _getValueFromAngle(angle);
-    if (value < getTrack.start) {
-      value = getTrack.start;
-    }
-    if (value > getTrack.end) {
-      value = getTrack.end;
-    }
-
-    if (_pointerType is RenderNeedlePointer) {
-      if (_movableWidget.isInteractive) {
-        if (_movableWidget.onChanged != null) {
-          _movableWidget.onChanged!(value);
+    if (value >= getTrack.start && value <= getTrack.end) {
+      if (_pointerType is RenderNeedlePointer) {
+        if (_movableWidget.isInteractive) {
+          if (_movableWidget.onChanged != null) {
+            _movableWidget.onChanged!(value);
+          }
         }
-      }
-    } else if (_pointerType is RenderRadialShapePointer) {
-      if (_movableShapePointer.isInteractive) {
-        if (radialPointerCallback != null) {
-          radialPointerCallback(value);
+      } else if (_pointerType is RenderRadialShapePointer) {
+        if (_movableShapePointer.isInteractive) {
+          if (radialPointerCallback != null) {
+            bool isChanging = value > getTrack.start || value < getTrack.end;
+            radialPointerCallback(value, isChanging);
+          }
         }
       }
     }
@@ -336,7 +332,7 @@ class RenderRadialGauge extends RenderBox
 
   void _handleDragUpdate(DragUpdateDetails details) {
     final Offset localPosition = globalToLocal(details.globalPosition);
-    _handleNewPosition(localPosition, radialPointerCallback: _movableShapePointer.onChanging);
+    _handleNewPosition(localPosition, radialPointerCallback: _movableShapePointer.onChanged);
     markNeedsPaint();
     markNeedsSemanticsUpdate();
   }

@@ -9,8 +9,7 @@ class RenderRadialShapePointer extends RenderBox {
     required double value,
     required Color color,
     required double height,
-    required ValueChanged<double>? onChanged,
-    required ValueChanged<double>? onChanging,
+    required Function(double, bool)? onChanged,
     required double width,
     required bool isInteractive,
     required PointerShape shape,
@@ -18,7 +17,6 @@ class RenderRadialShapePointer extends RenderBox {
   })  : _value = value,
         _color = color,
         _height = height,
-        _onChanging = onChanging,
         _onChanged = onChanged,
         _isInteractive = isInteractive,
         _width = width,
@@ -55,20 +53,10 @@ class RenderRadialShapePointer extends RenderBox {
     }
   }
 
-  ValueChanged<double>? get onChanging => _onChanging;
-  ValueChanged<double>? _onChanging;
+  Function(double, bool)? get onChanged => _onChanged;
+  Function(double, bool)? _onChanged;
 
-  set onChanging(ValueChanged<double>? value) {
-    if (value == _onChanging) {
-      return;
-    }
-    _onChanging = value;
-  }
-
-  ValueChanged<double>? get onChanged => _onChanged;
-  ValueChanged<double>? _onChanged;
-
-  set onChanged(ValueChanged<double>? value) {
+  set onChanged(Function(double, bool)? value) {
     if (value == _onChanged) {
       return;
     }
