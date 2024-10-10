@@ -312,10 +312,10 @@ class RenderRadialGauge extends RenderBox
   void _handleNewPosition(Offset position, {ValueChanged<double>? radialPointerCallback}) {
     final double angle = _getAngleFromOffset(position);
     double value = _getValueFromAngle(angle);
-    if (value > getTrack.start) {
+    if (value < getTrack.start) {
       value = getTrack.start;
     }
-    if (value < getTrack.end) {
+    if (value > getTrack.end) {
       value = getTrack.end;
     }
 
