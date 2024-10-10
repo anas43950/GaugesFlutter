@@ -17,7 +17,7 @@ class RenderRadialShapePointer extends RenderBox {
   })  : _value = value,
         _color = color,
         _height = height,
-        _onChanged = onChanged,
+        _onChanging = onChanged,
         _isInteractive = isInteractive,
         _width = width,
         _shape = shape,
@@ -53,8 +53,19 @@ class RenderRadialShapePointer extends RenderBox {
     }
   }
 
+  ValueChanged<double>? get onChanging => _onChanging;
+  ValueChanged<double>? _onChanging;
+
+  set onChanging(ValueChanged<double>? value) {
+    if (value == _onChanging) {
+      return;
+    }
+    _onChanging = value;
+  }
+
   ValueChanged<double>? get onChanged => _onChanged;
   ValueChanged<double>? _onChanged;
+
   set onChanged(ValueChanged<double>? value) {
     if (value == _onChanged) {
       return;
@@ -134,8 +145,7 @@ class RenderRadialShapePointer extends RenderBox {
     double gaugeEnd = _radialGauge.track.end;
     // final center = Offset(offset.dx, offset.dy);
 
-    final center = Offset(
-        size.width * _radialGauge.xCenterCoordinate + offset.dx,
+    final center = Offset(size.width * _radialGauge.xCenterCoordinate + offset.dx,
         size.height * _radialGauge.yCenterCoordinate + offset.dy);
 
     double value = calculateValueAngle(_value, gaugeStart, gaugeEnd);
@@ -149,13 +159,9 @@ class RenderRadialShapePointer extends RenderBox {
     final pointerPath = Path();
 
     // double pointerOffset = 430 + 0;
-    double pointerOffset =
-        (size.shortestSide / 2 - _radialGauge.track.thickness) *
-            _radialGauge.radiusFactor;
+    double pointerOffset = (size.shortestSide / 2 - _radialGauge.track.thickness) * _radialGauge.radiusFactor;
 
-    double circlePointerOffset =
-        (size.shortestSide / 2 - _radialGauge.track.thickness) *
-            _radialGauge.radiusFactor;
+    double circlePointerOffset = (size.shortestSide / 2 - _radialGauge.track.thickness) * _radialGauge.radiusFactor;
 
     double pointerEndX = center.dx + pointerOffset * cos(angle);
     double pointerEndY = center.dy + pointerOffset * sin(angle);
@@ -178,12 +184,10 @@ class RenderRadialShapePointer extends RenderBox {
     );
     pointerPath.close();
 
-    pointerRect = Rect.fromCircle(
-        center: Offset(pointerEndX, pointerEndY), radius: _width);
+    pointerRect = Rect.fromCircle(center: Offset(pointerEndX, pointerEndY), radius: _width);
 
     // canvas.drawRect(pointerRect, Paint()..color = _color);
-    canvas.drawCircle(Offset(circlePointerEndX, circlePointerEndY), _width,
-        Paint()..color = _color);
+    canvas.drawCircle(Offset(circlePointerEndX, circlePointerEndY), _width, Paint()..color = _color);
     // canvas.drawPath(pointerPath, Paint()..color = _color);
   }
 

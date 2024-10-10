@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -66,6 +67,7 @@ class RenderRadialGauge extends RenderBox
 
   double get getRadiusFactor => _radiusFactor;
   double _radiusFactor;
+
   set setRadiusFactor(double radiusFactor) {
     if (_radiusFactor == radiusFactor) return;
     _radiusFactor = radiusFactor;
@@ -75,6 +77,7 @@ class RenderRadialGauge extends RenderBox
 
   double get xCenterCoordinate => _xCenterCoordinate;
   double _xCenterCoordinate;
+
   set setXCenterCoordinate(double xCenterCoordinate) {
     if (_xCenterCoordinate == xCenterCoordinate) return;
     _xCenterCoordinate = xCenterCoordinate;
@@ -84,6 +87,7 @@ class RenderRadialGauge extends RenderBox
 
   double get yCenterCoordinate => _yCenterCoordinate;
   double _yCenterCoordinate;
+
   set setYCenterCoordinate(double yCenterCoordinate) {
     if (_yCenterCoordinate == yCenterCoordinate) return;
     _yCenterCoordinate = yCenterCoordinate;
@@ -93,6 +97,7 @@ class RenderRadialGauge extends RenderBox
 
   RadialTrack get getTrack => _track;
   RadialTrack _track;
+
   set setTrack(RadialTrack track) {
     if (_track == track) return;
     _track = track;
@@ -102,6 +107,7 @@ class RenderRadialGauge extends RenderBox
 
   List<RadialValueBar> get getValueBar => _valueBar!;
   List<RadialValueBar>? _valueBar;
+
   set setValueBar(List<RadialValueBar>? valueBar) {
     if (_valueBar == valueBar) return;
     _valueBar = valueBar;
@@ -111,6 +117,7 @@ class RenderRadialGauge extends RenderBox
 
   List<NeedlePointer> get getNeedlePointer => _needlePointer!;
   List<NeedlePointer>? _needlePointer;
+
   set setNeedlePointer(List<NeedlePointer>? needlePointer) {
     if (_needlePointer == needlePointer) return;
     _needlePointer = needlePointer;
@@ -121,18 +128,17 @@ class RenderRadialGauge extends RenderBox
   late Offset centOffset;
   late double? extraH;
   late Offset center;
+
   @override
   void performLayout() {
     size = computeDryLayout(constraints);
     Size s = size;
 
     RenderBox? child = firstChild;
-    center =
-        Offset(size.width * xCenterCoordinate, size.height * yCenterCoordinate);
+    center = Offset(size.width * xCenterCoordinate, size.height * yCenterCoordinate);
 
     while (child != null) {
-      final RadialGaugeParentData childParentData =
-          child.parentData as RadialGaugeParentData;
+      final RadialGaugeParentData childParentData = child.parentData as RadialGaugeParentData;
 
       if (child is RenderRadialShapePointer) {
         childParentData.offset = Offset.zero;
@@ -177,8 +183,7 @@ class RenderRadialGauge extends RenderBox
         );
         child.layout(childConstraints, parentUsesSize: true);
       } else {
-        childParentData.offset =
-            Offset(((size.width) / 2), ((size.height) / 2));
+        childParentData.offset = Offset(((size.width) / 2), ((size.height) / 2));
       }
 
       child = childParentData.nextSibling;
@@ -191,12 +196,8 @@ class RenderRadialGauge extends RenderBox
 
   @override
   Size computeDryLayout(BoxConstraints constraints) {
-    final double actualHeight = constraints.hasBoundedHeight
-        ? constraints.maxHeight
-        : kDefaultRadialGaugeSize;
-    final double actualWidth = constraints.hasBoundedWidth
-        ? constraints.maxWidth
-        : kDefaultRadialGaugeSize;
+    final double actualHeight = constraints.hasBoundedHeight ? constraints.maxHeight : kDefaultRadialGaugeSize;
+    final double actualWidth = constraints.hasBoundedWidth ? constraints.maxWidth : kDefaultRadialGaugeSize;
 
     kheight = actualHeight;
     kwidth = actualWidth;
@@ -209,8 +210,7 @@ class RenderRadialGauge extends RenderBox
   getRadialGaugeContainerSize() {
     Offset c = Offset(kheight / 2, kwidth / 2);
 
-    final Rect rect =
-        Rect.fromCenter(center: c, width: kwidth, height: kheight);
+    final Rect rect = Rect.fromCenter(center: c, width: kwidth, height: kheight);
 
     return rect.size;
   }
@@ -309,9 +309,8 @@ class RenderRadialGauge extends RenderBox
     defaultPaint(context, offset);
   }
 
-  void _handleDragUpdate(DragUpdateDetails details) {
-    final Offset localPosition = globalToLocal(details.globalPosition);
-    final double angle = _getAngleFromOffset(localPosition);
+  void _handleNewPosition(Offset position, {ValueChanged<double>? radialPointerCallback}) {
+    final double angle = _getAngleFromOffset(position);
     final double value = _getValueFromAngle(angle);
 
     if (value >= getTrack.start && value <= getTrack.end) {
@@ -323,13 +322,17 @@ class RenderRadialGauge extends RenderBox
         }
       } else if (_pointerType is RenderRadialShapePointer) {
         if (_movableShapePointer.isInteractive) {
-          if (_movableShapePointer.onChanged != null) {
-            _movableShapePointer.onChanged!(value);
+          if (radialPointerCallback != null) {
+            radialPointerCallback(value);
           }
         }
       }
     }
+  }
 
+  void _handleDragUpdate(DragUpdateDetails details) {
+    final Offset localPosition = globalToLocal(details.globalPosition);
+    _handleNewPosition(localPosition, radialPointerCallback: _movableShapePointer.onChanging);
     markNeedsPaint();
     markNeedsSemanticsUpdate();
   }
@@ -356,10 +359,7 @@ class RenderRadialGauge extends RenderBox
       // normalizedAngle += 2 * pi; // Make sure the angle is positive
     }
 
-    final double value = (normalizedAngle /
-            (endAngle - startAngle) *
-            (getTrack.end - getTrack.start)) +
-        getTrack.start;
+    final double value = (normalizedAngle / (endAngle - startAngle) * (getTrack.end - getTrack.start)) + getTrack.start;
     return value;
   }
 
@@ -375,7 +375,8 @@ class RenderRadialGauge extends RenderBox
 
   void _handleDragEnd(DragEndDetails details) {
     _restrictNeedlePointer = false;
-
+    final Offset localPosition = globalToLocal(details.globalPosition);
+    _handleNewPosition(localPosition, radialPointerCallback: _movableShapePointer.onChanging);
     _horizontalDrag.dispose();
     _verticalDrag.dispose();
   }
